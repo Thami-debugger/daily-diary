@@ -1,7 +1,14 @@
+import { AuthProvider } from './contexts/AuthContext';
+
 export const metadata = {
   title: 'Daily Diary',
   description: 'Your daily planning journal',
-  viewport: 'width=device-width, initial-scale=1.0, maximum-scale=1.0',
+}
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1.0,
+  maximumScale: 1.0,
 }
 
 export default function RootLayout({ children }) {
@@ -15,7 +22,9 @@ export default function RootLayout({ children }) {
         fontFamily: 'system-ui, -apple-system, sans-serif',
         overflow: 'auto'
       }}>
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   )

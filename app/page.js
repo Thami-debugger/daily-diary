@@ -1,13 +1,10 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+import { useAuth } from './contexts/AuthContext';
+import Auth from './components/Auth';
 
 export default function Journal() {
+  const { user, loading, signOut, supabase } = useAuth();
   const [history, setHistory] = useState([]);
   const [expandedItems, setExpandedItems] = useState({});
   const [formData, setFormData] = useState({
@@ -20,15 +17,18 @@ export default function Journal() {
     gratitude: ''
   });
 
-  // Load history when the page opens
+  // Load history when the page opens and user is authenticated
   useEffect(() => {
-    fetchHistory();
-  }, []);
+    if (user) {
+      fetchHistory();
+    }
+  }, [user]);
 
   const fetchHistory = async () => {
     const { data, error } = await supabase
       .from('entries')
       .select('*')
+      .eq('user_id', user.id)
       .order('inserted_at', { ascending: false });
     
     if (!error) setHistory(data);
@@ -37,15 +37,37 @@ export default function Journal() {
   const saveEntry = async () => {
     const { error } = await supabase
       .from('entries')
-      .upsert([formData], { onConflict: 'date' });
+      .upsert([{ ...formData, user_id: user.id }], { onConflict: 'date,user_id' });
     
     if (error) {
-      alert("Error saving!");
+      alert(`Error saving: ${error.message}`);
+      console.error('Full error:', error);
     } else {
       alert("Saved successfully!");
       fetchHistory(); // Refresh the list after saving
     }
   };
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#000',
+        color: '#fff'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  // Show auth screen if not logged in
+  if (!user) {
+    return <Auth />;
+  }
 
   const toggleExpanded = (id) => {
     setExpandedItems(prev => ({
@@ -73,8 +95,30 @@ export default function Journal() {
         width: '100%',
         maxWidth: '600px'
       }}>
+      {/* Header with sign out button */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h1 style={{ margin: 0 }}>📝 My Diary</h1>
+        <button 
+          onClick={signOut}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#333',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '14px',
+            transition: 'background-color 0.2s'
+          }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = '#555'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = '#333'}
+        >
+          Sign Out
+        </button>
+      </div>
+
       <section style={{ marginBottom: '50px', backgroundColor: '#1a1a1a', padding: '20px', borderRadius: '12px' }}>
-        <h2 style={{ marginTop: 0 }}>📝 Tomorrow Planning</h2>
+        <h2 style={{ marginTop: 0 }}>Tomorrow Planning</h2>
         <p><strong>Date:</strong> {formData.date}</p>
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
