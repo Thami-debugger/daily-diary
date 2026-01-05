@@ -1,0 +1,6 @@
+Project Name: Daily Diary
+What it does: A minimalist daily planning journal web app that helps you set and track your daily goals, objectives, and gratitude. Plan your tomorrow today with organized goal-setting and view your progress history at a glance with an intuitive collapsible timeline.
+Tech Stack: Next.js 14 (React), Supabase (PostgreSQL database + real-time backend), JavaScript, CSS-in-JS with dark theme UI
+Biggest Challenge: Implementing the collapsible history feature where users can click on dates to expand/collapse entries, ensuring smooth state management and creating an intuitive dark-themed UI that's both functional and visually appealing.
+Link: https://github.com/Thami-debugger/daily-diary
+Tone: Excited and reflective - proud of building a productivity tool that I'll actually use daily

@@ -55,7 +55,24 @@ export default function Journal() {
   };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '40px auto', padding: '20px', fontFamily: 'system-ui, sans-serif', backgroundColor: '#000', color: '#fff', minHeight: '100vh' }}>
+    <div style={{ 
+      width: '100%', 
+      minHeight: '100vh',
+      maxWidth: '100%',
+      margin: 0, 
+      padding: '20px', 
+      boxSizing: 'border-box',
+      fontFamily: 'system-ui, -apple-system, sans-serif', 
+      backgroundColor: '#000', 
+      color: '#fff',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
+    }}>
+      <div style={{
+        width: '100%',
+        maxWidth: '600px'
+      }}>
       <section style={{ marginBottom: '50px', backgroundColor: '#1a1a1a', padding: '20px', borderRadius: '12px' }}>
         <h2 style={{ marginTop: 0 }}>📝 Tomorrow Planning</h2>
         <p><strong>Date:</strong> {formData.date}</p>
@@ -101,6 +118,7 @@ export default function Journal() {
           </div>
         ))}
       </section>
+      </div>
     </div>
   );
 }
